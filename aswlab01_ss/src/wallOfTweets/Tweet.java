@@ -3,6 +3,7 @@ package wallOfTweets;
 
 public class Tweet {
 
+	private long twid;
 	private String author;
 	private String text;
 	private java.util.Date date;
@@ -26,6 +27,12 @@ public class Tweet {
 		this.date = date;
 	}
 	public Tweet() {
+	}
+	public long getTwid() {
+		return twid;
+	}
+	public void setTwid(long twid) {
+		this.twid = twid;
 	}
 	
 	
