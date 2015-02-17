@@ -173,3 +173,6 @@ select * from tweets order by tTIME desc [42122-147]
 org.h2.jdbc.JdbcSQLException: Tabla "WEETS" no encontrada
 Table "WEETS" not found; SQL statement:
 select * from weets order by twTIME desc [42102-147]
+02-17 15:01:33 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "UPDATE TWEETS TWTIME =[*] DATEADD('DAY',523,TWTIME) "; expected "SET"; SQL statement:
+update tweets twtime = dateadd('DAY',523,twtime) [42001-147]
