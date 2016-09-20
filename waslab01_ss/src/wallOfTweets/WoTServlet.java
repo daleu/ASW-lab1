@@ -54,8 +54,17 @@ public class WoTServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
+		String tweet = req.getParameter("tweet_text");
+		String author = req.getParameter("author");
+		
+		try {
+			Database.insertTweet(author, tweet);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// This method does NOTHING but to redirect to the main page
-
 		res.sendRedirect("wot");
 
 	}
