@@ -56,16 +56,21 @@ public class WoTServlet extends HttpServlet {
 
 		String tweet = req.getParameter("tweet_text");
 		String author = req.getParameter("author");
-		
+
+		long tweetId = 0;
 		try {
-			Database.insertTweet(author, tweet);
+			tweetId = Database.insertTweet(author, tweet);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// This method does NOTHING but to redirect to the main page
-		res.sendRedirect("wot");
+		if (req.getHeader("Accept").equals("text/plain")) {
+			PrintWriter out = res.getWriter();
+			out.print(tweetId);
+		} else {
+			// This method does NOTHING but to redirect to the main page
+			res.sendRedirect("wot");
+		}
 
 	}
 
