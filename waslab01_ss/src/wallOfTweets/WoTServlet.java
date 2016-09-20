@@ -54,19 +54,24 @@ public class WoTServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-		String tweet = req.getParameter("tweet_text");
-		String author = req.getParameter("author");
+		Long tweet_id = Long.parseLong(req.getParameter("tweet_id"));
+		System.out.println(tweet_id);
+		if (tweet_id == null) {
+			String tweet = req.getParameter("tweet_text");
+			String author = req.getParameter("author");
 
-		long tweetId = 0;
-		try {
-			tweetId = Database.insertTweet(author, tweet);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				tweet_id = Database.insertTweet(author, tweet);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			Database.deleteTweet(tweet_id);
 		}
 		if (req.getHeader("Accept").equals("text/plain")) {
 			PrintWriter out = res.getWriter();
-			out.print(tweetId);
+			out.print(tweet_id);
 		} else {
 			// This method does NOTHING but to redirect to the main page
 			res.sendRedirect("wot");
@@ -105,6 +110,10 @@ public class WoTServlet extends HttpServlet {
 			}
 			out.println("<div class=\"wallitem\">");
 			out.println("<h4><em>" + tweet.getAuthor() + "</em> @ " + timeFormatter.format(tweet.getDate()) + "</h4>");
+			out.println("<form action=\"wot\" method=\"post\">");
+			out.println("<input type=\"hidden\" name=\"tweet_id\" value=" + tweet.getTwid() + ">");
+			out.println("<input type=\"submit\" name=\"action\" value=\"Delete\">");
+			out.println("</form>");
 			out.println("<p>" + tweet.getText() + "</p>");
 			out.println("</div>");
 		}
