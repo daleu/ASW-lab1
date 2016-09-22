@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,13 +63,29 @@ public class WoTServlet extends HttpServlet {
 
 			try {
 				tweet_id = Database.insertTweet(author, tweet);
+				res.addCookie(new Cookie("author", author));
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
-			tweet_id = Long.parseLong(param_tweet_id);
-			Database.deleteTweet(tweet_id);
+			try {
+				Cookie[] cookies = req.getCookies();
+				String cookie_author = "I'm not the author";
+				tweet_id = Long.parseLong(param_tweet_id);
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals("author")) cookie_author = cookie.getValue();
+				}
+				Vector<Tweet> tweets = Database.getTweets();
+				for (Tweet tweet : tweets){
+					if (tweet.getTwid() == tweet_id && tweet.getAuthor().equals(cookie_author)) {
+						Database.deleteTweet(tweet_id);
+					}
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if (req.getHeader("Accept").equals("text/plain")) {
 			PrintWriter out = res.getWriter();
