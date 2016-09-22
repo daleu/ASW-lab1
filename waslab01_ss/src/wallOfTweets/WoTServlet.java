@@ -54,9 +54,9 @@ public class WoTServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-		Long tweet_id = Long.parseLong(req.getParameter("tweet_id"));
-		System.out.println(tweet_id);
-		if (tweet_id == null) {
+		String param_tweet_id = req.getParameter("tweet_id");
+		Long tweet_id = null;
+		if (param_tweet_id == null) {
 			String tweet = req.getParameter("tweet_text");
 			String author = req.getParameter("author");
 
@@ -67,6 +67,7 @@ public class WoTServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		} else {
+			tweet_id = Long.parseLong(param_tweet_id);
 			Database.deleteTweet(tweet_id);
 		}
 		if (req.getHeader("Accept").equals("text/plain")) {

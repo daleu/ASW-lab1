@@ -11,15 +11,16 @@ public class SimpleFluentClient {
 		/* Insert code for Task #4 here */
 		String newTweet = Request.Post("http://localhost:8080/waslab01_ss/wot").addHeader("Accept", "text/plain")
 				.bodyForm(Form.form().add("author", "Unicorn").add("tweet_text", "I Love rainbows").build()).execute()
-				.returnContent().asString();
+				.returnContent().toString();
 		System.out.println(newTweet);
 
 		System.out.println(Request.Get("http://localhost:8080/waslab01_ss").addHeader("Accept", "text/plain").execute()
 				.returnContent());
 
 		/* Insert code for Task #5 here */
-		System.out.println(Request.Post("http://localhost:8080/waslab01_ss/wot").addHeader("Accept", "text/plain")
-				.bodyForm(Form.form().add("tweet_id", newTweet).build()).execute().returnContent());
+		Request.Post("http://localhost:8080/waslab01_ss/wot").addHeader("Accept", "text/plain")
+				.bodyForm(Form.form().add("tweet_id", newTweet).build()).execute().returnContent();
+		System.out.println("Esborrem el tweet " + newTweet);
 
 	}
 }
