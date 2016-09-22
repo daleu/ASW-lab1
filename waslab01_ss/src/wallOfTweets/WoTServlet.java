@@ -3,6 +3,9 @@ package wallOfTweets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Locale;
@@ -62,27 +65,46 @@ public class WoTServlet extends HttpServlet {
 			String author = req.getParameter("author");
 
 			try {
+				MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+				messageDigest.update(author.getBytes());
+				byte[] sum = messageDigest.digest();
+				BigInteger bigInteger = new BigInteger(1,sum);
+				String hash = bigInteger.toString(64);
 				tweet_id = Database.insertTweet(author, tweet);
-				res.addCookie(new Cookie("author", author));
+				res.addCookie(new Cookie("author", hash));
 			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
 			try {
+				MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 				Cookie[] cookies = req.getCookies();
 				String cookie_author = "I'm not the author";
 				tweet_id = Long.parseLong(param_tweet_id);
 				for (Cookie cookie : cookies) {
-					if (cookie.getName().equals("author")) cookie_author = cookie.getValue();
+					if (cookie.getName().equals("author")) {
+						cookie_author = cookie.getValue();
+					}
 				}
 				Vector<Tweet> tweets = Database.getTweets();
-				for (Tweet tweet : tweets){
-					if (tweet.getTwid() == tweet_id && tweet.getAuthor().equals(cookie_author)) {
-						Database.deleteTweet(tweet_id);
+				for (Tweet tweet : tweets) {
+					if (tweet.getTwid() == tweet_id) {
+						messageDigest.update(tweet.getAuthor().getBytes());
+						byte[] sum = messageDigest.digest();
+						String hash = new BigInteger(1,sum).toString(64);
+						if (hash.equals(cookie_author)) {
+							Database.deleteTweet(tweet_id);
+						}
 					}
 				}
 			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
